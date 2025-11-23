@@ -1,0 +1,31 @@
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PW}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate.jdbc.time_zone: UTC
+
+  cloud:
+    aws:
+      region:
+        static: us-east-1
+      credentials:
+        access-key: ${AWS_ACCESS_KEY_ID:x}
+        secret-key: ${AWS_SECRET_ACCESS_KEY:x}
+      sqs:
+        endpoint: ${SQS_ENDPOINT:http://localhost:4566}
+
+app:
+  storage:
+    endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+    accessKey: ${MINIO_ACCESS:minio}
+    secretKey: ${MINIO_SECRET:minio123}
+    bucket: ${MINIO_BUCKET:uploads}
+  publicUploadBase: ${PUBLIC_UPLOAD_BASE:http://localhost:9000/uploads}
+  queues:
+    request: ${SQS_REQUEST_QUEUE:analysis-request}
+    result: ${SQS_RESULT_QUEUE:analysis-result}

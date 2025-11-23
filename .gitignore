@@ -1,0 +1,47 @@
+### Kotlin / Java / Spring Boot ###
+*.class
+*.jar
+*.war
+*.ear
+*.iml
+*.iws
+*.ipr
+**/.gradle/
+**/build/
+/out/
+/target/
+*.log
+*.tmp
+*.pid
+
+### IntelliJ / VSCode ###
+.idea/
+.vscode/
+*.iml
+
+### Python Worker ###
+__pycache__/
+*.pyc
+.venv/
+venv/
+dist/
+*.egg-info/
+
+### OS ###
+.DS_Store
+Thumbs.db
+
+### Docker ###
+docker-data/
+docker-compose.override.yml
+
+### Media / Temp ###
+*.wav
+*.mp3
+# *.m4a
+*.flac
+*.webm
+temp_audio/
+uploads/
+storage/
+minio/

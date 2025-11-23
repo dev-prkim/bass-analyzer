@@ -1,0 +1,54 @@
+version: "3.8"
+services:
+  localstack:
+    image: localstack/localstack:3
+    environment:
+      - SERVICES=sqs,s3
+      - DEBUG=0
+    ports: ["4566:4566"]
+
+  postgres:
+    image: postgres:16
+    environment:
+      - POSTGRES_DB=bass
+      - POSTGRES_USER=bass
+      - POSTGRES_PASSWORD=bass
+    ports: ["5432:5432"]
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      - MINIO_ROOT_USER=minio
+      - MINIO_ROOT_PASSWORD=minio123
+    ports: ["9000:9000","9001:9001"]
+
+  api:
+    build: ./api
+    environment:
+      - DB_URL=jdbc:postgresql://postgres:5432/bass
+      - DB_USER=bass
+      - DB_PW=bass
+      - MINIO_ENDPOINT=http://minio:9000
+      - MINIO_ACCESS=minio
+      - MINIO_SECRET=minio123
+      - MINIO_BUCKET=uploads
+      - PUBLIC_UPLOAD_BASE=http://localhost:9000/uploads
+      - SQS_ENDPOINT=http://localstack:4566
+      - SQS_REQUEST_QUEUE=analysis-request
+      - SQS_RESULT_QUEUE=analysis-result
+      - AWS_ACCESS_KEY_ID=x
+      - AWS_SECRET_ACCESS_KEY=x
+    ports: ["8080:8080"]
+    depends_on: [postgres, minio, localstack]
+
+  worker:
+    build: ./worker-py
+    command: sh -c "apt-get update && apt-get install -y ffmpeg && pip install -r requirements.txt && python worker_sqs.py"
+    environment:
+      - SQS_ENDPOINT=http://localstack:4566
+      - SQS_REQUEST_URL=http://localstack:4566/000000000000/analysis-request
+      - SQS_RESULT_URL=http://localstack:4566/000000000000/analysis-result
+      - AWS_ACCESS_KEY_ID=x
+      - AWS_SECRET_ACCESS_KEY=x
+    depends_on: [localstack]
