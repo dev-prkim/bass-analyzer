@@ -45,3 +45,5 @@ temp_audio/
 uploads/
 storage/
 minio/
+
+*application-release.yml
